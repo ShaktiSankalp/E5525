@@ -1,4 +1,4 @@
-
+tt
 
 
 
@@ -109,3 +109,8 @@
 
 
 https://github.com/thisiskshitij/eh5525
+
+composer install     # To install PHP dependencies
+npm install          # To install frontend dependencies (if applicable)
+cp .env.example .env # Copy environment config
+php artisan key:generate
