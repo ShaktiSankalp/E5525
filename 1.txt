@@ -1,6 +1,4 @@
-create a blade file for a restaurant reservation form.include fileds for name, numer of guest, Date of reservation(date input)
-, and special request(textarea). after submission display the reservation details on a new page.
-** dont send whole project, only required files like web.php , controller, and blade view**
+hakllo
 
 
 
