@@ -2,3 +2,101 @@ composer install     # To install PHP dependencies
 npm install          # To install frontend dependencies (if applicable)
 cp .env.example .env # Copy environment config
 php artisan key:generate
+
+
+------------------------
+cartcontroller.php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class CartController extends Controller
+{
+    public function addProduct(Request $request)
+    {
+        $product = ["id"=> 101,"name"=>'Smartphone',"price"=>200];
+        $cart = session()->get('cart', []);
+        $cart[] = $product;
+        session(['cart' => $cart]);
+
+        return redirect()->route('cart.show');
+    }
+
+    public function showCart()
+    {
+        $cart = session()->get('cart', []);
+        $total = array_sum(array_column($cart, 'price'));
+
+        return view('cart', compact('cart', 'total'));
+    }
+
+    public function clearCart()
+    {
+        session()->forget('cart');
+        return redirect()->route('cart.show');
+    }
+}
+
+
+-----------------------------------------------------
+
+cart.blade.php
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopping Cart</title>
+</head>
+<body>
+
+<h1>Your Shopping Cart</h1>
+
+@if(count($cart) > 0)
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price ($)</th>
+        </tr>
+        @foreach($cart as $item)
+            <tr>
+                <td>{{ $item['id'] }}</td>
+                <td>{{ $item['name'] }}</td>
+                <td>{{ $item['price'] }}</td>
+            </tr>
+        @endforeach
+    </table>
+
+    <h3>Total: ${{ $total }}</h3>
+@else
+    <p>Your cart is empty.</p>
+@endif
+
+<br>
+<a href="{{ route('cart.add') }}">Add Product</a> |
+<a href="{{ route('cart.clear') }}">Clear Cart</a>
+
+</body>
+</html>
+
+
+------------------------------------------------------------------------
+
+web.php
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\CartController;
+
+Route::get('/cart/add', [CartController::class, 'addProduct'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
+Route::get('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+
+Route::get('/', function () {
+    return view('welcome');
+});
